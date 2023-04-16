@@ -1,0 +1,15 @@
+{
+    "semi": true,
+    "tabWidth": 4,
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "arrowParens": "always",
+    "jsxSingleQuote": false,
+    "tsSingleQuote": false,
+    "jsxBracketSameLine": false,
+    "endOfLine": "auto",
+    "rules": {
+        "quotes": ["error", "double", { "avoidEscape": true }]
+    }
+}

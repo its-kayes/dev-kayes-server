@@ -1,0 +1,37 @@
+// {
+//     "editor.defaultFormatter": "vscode.css-language-features",
+//     "editor.formatOnSave": true,
+//     "[javascript]": {
+//         "editor.formatOnSave": true,
+//         "editor.defaultFormatter": "esbenp.prettier-vscode"
+//     },
+//     "editor.formatOnPaste": true,
+//     "editor.tabSize": 4,
+//     "eslint.validate": ["typescript", "javascript"],
+//     "javascript.validate.enable": false, //disable all built-in syntax checking
+//     "editor.codeActionsOnSave": {
+//         "source.fixAll.eslint": true,
+//         "source.organizeImports": true
+//     },
+//     "eslint.codeActionsOnSave": true,
+//     "eslint.alwaysShowStatus": true,
+//     "emmet.triggerExpansionOnTab": true,
+//     "[typescript]": {
+//         "editor.formatOnSave": true,
+//         "editor.defaultFormatter": "esbenp.prettier-vscode"
+//     }
+// }
+
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[typescript]": {
+        "editor.defaultFormatterOptions": {
+            "singleQuote": true
+        }
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatterOptions": {
+            "singleQuote": true
+        }
+    }
+}
