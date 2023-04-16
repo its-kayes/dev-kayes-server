@@ -1,17 +1,24 @@
 {
-  "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "declaration": true,
-    "outDir": "dist",
-    "rootDir": ".",
-    "esModuleInterop": true,
-    "strict": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "skipLibCheck": true
-  },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules"]
+    "compilerOptions": {
+        "target": "es2018",
+        "module": "commonjs",
+        "declaration": true,
+        "outDir": "dist",
+        "rootDir": ".",
+        "esModuleInterop": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/types": ["types.d.ts"],
+            "@/config/*": ["config/*"]
+            // "@/siteEnv/*": ["config/siteEnv.ts/*"]
+            // "@/types/*": ["types/*"]
+        }
+    },
+    "include": ["**/*.ts"],
+    "exclude": ["node_modules"]
 }
