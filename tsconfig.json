@@ -14,7 +14,9 @@
         "baseUrl": ".",
         "paths": {
             "@/types": ["types.d.ts"],
-            "@/config/*": ["config/*"]
+            "@/config/*": ["config/*"],
+            "@/utils/*": ["utils/*"],
+            "@/controllers/*": ["controllers/*"]
             // "@/siteEnv/*": ["config/siteEnv.ts/*"]
             // "@/types/*": ["types/*"]
         }

@@ -1,17 +1,14 @@
-import express from 'express';
-import { PORT } from './config/siteEnv';
+import mongoose, { ConnectOptions } from 'mongoose';
+import app from './app';
 
-const app = express();
-const port = PORT || 3000;
+import { MONGO_URI, PORT } from './config/siteEnv';
 
-app.get('/', (req, res) => {
-    res.send('Hello, world!');
-});
-
-app.get('/api', (req, res) => {
-    res.send('Hello, API!');
-});
-
-app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-});
+mongoose
+    .connect(MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    } as ConnectOptions)
+    .then(() => {
+        console.log('DB Connected!');
+        app.listen(PORT, () => console.log(`Server Started on Port: ${PORT}`));
+    });
