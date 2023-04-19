@@ -1,26 +1,18 @@
 {
     "compilerOptions": {
-        "target": "es2018",
-        "module": "commonjs",
+        "target": "ES6",
+        "module": "es2020",
         "declaration": true,
-        "outDir": "dist",
-        "rootDir": ".",
+        "outDir": "./dist",
+        "rootDir": "./src",
         "esModuleInterop": true,
         "strict": true,
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "sourceMap": true,
-        "skipLibCheck": true,
-        "baseUrl": ".",
-        "paths": {
-            "@/types": ["types.d.ts"],
-            "@/config/*": ["config/*"],
-            "@/utils/*": ["utils/*"],
-            "@/controllers/*": ["controllers/*"]
-            // "@/siteEnv/*": ["config/siteEnv.ts/*"]
-            // "@/types/*": ["types/*"]
-        }
+        "skipLibCheck": true
     },
-    "include": ["**/*.ts"],
+    "compileOnSave": true,
+    "include": ["src/**/*"],
     "exclude": ["node_modules"]
 }
