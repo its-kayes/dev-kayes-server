@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import AppError from './utils/appError.js';
-// import globalErrorHandler from '@/controllers/errorController';
 import globalErrorHandler from './controllers/errorController.js';
 
 const app = express();
@@ -26,7 +25,7 @@ app.use(options);
 app.use('/dev-check', (req: Request, res: Response) => {
     res.status(200).json({
         status: 'ok',
-        message: `Server is running, Req from :- ${req.ip}`,
+        message: `Server is running:), Req from :- ${req.ip}`,
     });
 });
 

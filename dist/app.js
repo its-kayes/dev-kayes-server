@@ -3,7 +3,6 @@ import logger from 'morgan';
 import helmet from 'helmet';
 import express from 'express';
 import AppError from './utils/appError.js';
-// import globalErrorHandler from '@/controllers/errorController';
 import globalErrorHandler from './controllers/errorController.js';
 const app = express();
 const options = [
@@ -21,7 +20,7 @@ app.use(options);
 app.use('/dev-check', (req, res) => {
     res.status(200).json({
         status: 'ok',
-        message: `Server is running, Req from :- ${req.ip}`,
+        message: `Server is running:), Req from :- ${req.ip}`,
     });
 });
 app.all('*', (req, res, next) => {
