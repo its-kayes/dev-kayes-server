@@ -5,6 +5,7 @@ import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
+import AppRoutes from './base-routes/v1/AppRoutes.js';
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use('/dev-check', (req: Request, res: Response) => {
         message: `Server is running:), Req from :- ${req.ip}`,
     });
 });
+
+app.use('/api/v1', AppRoutes);
 
 app.all('*', (req: Request, res: Response, next: NextFunction) => {
     next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
