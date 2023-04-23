@@ -12,7 +12,7 @@
         "build": "tsc",
         "start": "node dist/server.js",
         "dev": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
-        "dev:ts": "\"tsc -w\" \"nodemon dist/server.js\""
+        "dev:ts": "yarn tsc && concurrently \"tsc -w\" \"nodemon dist/server.js\""
     },
     "eslintConfig": {
         "extends": [
