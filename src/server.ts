@@ -1,7 +1,7 @@
 import mongoose, { ConnectOptions } from 'mongoose';
-import app from './app';
+import app from './app.js';
 
-import { MONGO_URI, PORT } from './config/siteEnv';
+import { MONGO_URI, PORT } from './config/siteEnv.js';
 
 mongoose
     .connect(MONGO_URI, {
@@ -11,4 +11,7 @@ mongoose
     .then(() => {
         console.log('DB Connected!');
         app.listen(PORT, () => console.log(`Server Started on Port: ${PORT}`));
+    })
+    .catch((error) => {
+        console.error(error);
     });

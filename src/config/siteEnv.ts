@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { SiteEnvTypes } from '@/types';
+import { SiteEnvTypes } from '../../types.js';
 
 dotenv.config();
 
