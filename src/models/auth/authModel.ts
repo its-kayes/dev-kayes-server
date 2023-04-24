@@ -6,13 +6,13 @@ export interface IUser {
     password: string;
     role: string;
     signInDate: Date;
-    failedLoginAttempts: number[];
+    failedLoginAttempts: string[];
     lockUntil: Date;
     isVerified: boolean;
     verificationToken: number;
     loginHistory: {
         loginDate: Date;
-        loginIP: number;
+        loginIP: string;
     }[];
 }
 
@@ -45,7 +45,7 @@ const registerSchema = new Schema<IUser>(
             type: Date,
             default: new Date(),
         },
-        failedLoginAttempts: [Number],
+        failedLoginAttempts: [String],
         lockUntil: {
             type: Date,
         },
@@ -65,7 +65,7 @@ const registerSchema = new Schema<IUser>(
                     default: new Date(),
                 },
                 loginIP: {
-                    type: Number,
+                    type: String,
                 },
             },
         ],
