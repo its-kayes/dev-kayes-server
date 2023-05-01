@@ -4,6 +4,6 @@ import { checkMailSend, registerController } from '../../controllers/auth/authCo
 const router = Router();
 
 router.post('/register', registerController);
-router.post('/send-mail-check', checkMailSend);
+//router.post('/send-mail-check', checkMailSend);
 
 export { router as authRoutes };

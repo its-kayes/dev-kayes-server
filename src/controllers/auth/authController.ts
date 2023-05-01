@@ -38,10 +38,9 @@ export const registerController = catchAsync(
         //        <---------- Send Token to Email ------------>
 
         const dataForSendMail = {
-            to: 'kayes.ek8@gmail.com',
-            text: 'dev check',
-            html: `<b>Your Verification token is ${verificationToken} </b>`,
-            subject: 'Please confirm your Identity',
+            to: email,
+            name,
+            verificationToken,
         };
 
         const response = await sendEmailWithSmtp(dataForSendMail);
@@ -59,19 +58,18 @@ export const registerController = catchAsync(
     },
 );
 
-export const checkMailSend = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const data = {
-        to: 'kayes.ek8@outlook.com',
-        text: 'dev check',
-        html: '<b>dev check?</b>',
-        subject: 'Please confirm your Identity',
-    };
-
-    const response = await sendEmailWithSmtp(data);
-
-    if (!response.status) {
-        next(new AppError(`${response.message}`, 400));
-    }
+export const checkMailSend = catchAsync(async (req: Request, res: Response) => {
+    //    const data = {
+    //        to: email,
+    //        name,
+    //        verificationToken,
+    //    };
+    //
+    //    const response = await sendEmailWithSmtp(data);
+    //
+    //    if (!response.status) {
+    //        next(new AppError(`${response.message}`, 400));
+    //    }
     return res.status(200).json({
         message: 'Message Send Successfully',
     });

@@ -8,9 +8,11 @@ type ISendMailWithSmtpReturn = {
 
 type ISendMailWithSmtpData = {
     to: string;
-    subject: string;
-    text: string;
+    subject?: string;
+    text?: string;
     html?: string;
+    name: string;
+    verificationToken: number;
 };
 
 export const getSixDigitCode = () => {
@@ -33,9 +35,19 @@ export const sendEmailWithSmtp = async (
     const info = await transporter.sendMail({
         from: `<${SMTP_USER}>`, // sender address
         to: data.to, // list of receivers
-        subject: data.subject, // Subject line
-        text: data.text, // plain text body
-        html: data.html, // html body
+        subject: 'Please verify you Identity !!', // Subject line
+        text: 'Account Verification', // plain text body
+        html: `<div>
+                    <h2>Account Verification Code</h2>
+                    <p>Dear ${data.name},</p>
+                    <p>Thank you for be a partner. To complete the registration process, please enter the verification code below:</p>
+                    <p style="font-size: 24px; font-weight: bold;">${data.verificationToken}</p>
+                    <p>Please enter the code as soon as possible to ensure that your account is fully activated.</p>
+                    <p>If you did not request this verification code, please ignore this email.</p>
+                    <p>Thank you for being with <a href="https://www.its-kayes.live/" target="_blank"> Dev Kayes</a> .</p>
+                    <p>Sincerely,</p>
+                    <p>Emrul Kayes</p>
+              </div>`, // html body
     });
 
     if (info.accepted.length === 1) return { status: true, message: 'Mail Sent Successfully ;)' };
