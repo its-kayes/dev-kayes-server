@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { checkMailSend, registerController } from '../../controllers/auth/authController.js';
+import { login, registerController } from '../../controllers/auth/authController.js';
 
 const router = Router();
 
 router.post('/register', registerController);
-//router.post('/send-mail-check', checkMailSend);
+router.get('/login', login);
 
 export { router as authRoutes };

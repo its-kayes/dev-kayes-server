@@ -10,6 +10,11 @@ interface IRegisterType extends IUser {
     confirmPassword: string;
 }
 
+type ILoginType = {
+    email?: string;
+    pass?: string;
+};
+
 export const registerController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const { name, email, password, confirmPassword, loginIP }: IRegisterType = req.body;
@@ -58,19 +63,20 @@ export const registerController = catchAsync(
     },
 );
 
-export const checkMailSend = catchAsync(async (req: Request, res: Response) => {
-    //    const data = {
-    //        to: email,
-    //        name,
-    //        verificationToken,
-    //    };
-    //
-    //    const response = await sendEmailWithSmtp(data);
-    //
-    //    if (!response.status) {
-    //        next(new AppError(`${response.message}`, 400));
-    //    }
+export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { email, pass }: ILoginType = req.query;
+
+    if (!email) return next(new AppError('Please provide email address', 401));
+    if (!pass) return next(new AppError('Please provide password ', 401));
+
+    const isUser = await User.findOne({ email: email }).select('password');
+    if (!isUser) return next(new AppError('No user find', 404));
+
+    const isVerify = await bcrypt.compare(pass, isUser.password);
+    if (!isVerify) return next(new AppError('Password not match', 401));
+
     return res.status(200).json({
-        message: 'Message Send Successfully',
+        message: 'Login Successfully',
+        isVerify,
     });
 });
