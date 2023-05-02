@@ -57,3 +57,8 @@ export const sendEmailWithSmtp = async (
         message: "Mail is't sent due to server Issue",
     };
 };
+
+export const passwordReges = async (password: string) => {
+    const passwordReg = /^.{4,20}$/;
+    return passwordReg.test(password);
+};

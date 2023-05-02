@@ -3,17 +3,16 @@ import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../../utils/catchAsync.js';
 import { IUser, User } from '../../models/auth/authModel.js';
 import AppError from '../../utils/appError.js';
-import { getSixDigitCode, sendEmailWithSmtp } from '../../services/auth/authService.js';
+import {
+    getSixDigitCode,
+    passwordReges,
+    sendEmailWithSmtp,
+} from '../../services/auth/authService.js';
 
 interface IRegisterType extends IUser {
     loginIP: string;
     confirmPassword: string;
 }
-
-type ILoginType = {
-    email?: string;
-    pass?: string;
-};
 
 export const registerController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -23,6 +22,9 @@ export const registerController = catchAsync(
 
         if (password !== confirmPassword)
             return next(new AppError('Password and confirm password must match', 400));
+
+        if (!(await passwordReges(password)))
+            return next(new AppError('Password must be 4 character long!', 401));
 
         const isRegister = await User.findOne({ email });
         if (isRegister) return next(new AppError('Email already registered', 400));
@@ -63,11 +65,19 @@ export const registerController = catchAsync(
     },
 );
 
+interface ILoginType {
+    email: string;
+    pass: string;
+}
+
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const { email, pass }: ILoginType = req.query;
+    const { email, pass }: ILoginType = req.query as unknown as ILoginType;
 
     if (!email) return next(new AppError('Please provide email address', 401));
     if (!pass) return next(new AppError('Please provide password ', 401));
+
+    if (!(await passwordReges(pass)))
+        return next(new AppError('Password must be 4 character long!', 401));
 
     const isUser = await User.findOne({ email: email }).select('password');
     if (!isUser) return next(new AppError('No user find', 404));
@@ -78,5 +88,6 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     return res.status(200).json({
         message: 'Login Successfully',
         isVerify,
+        id: req.ip,
     });
 });
