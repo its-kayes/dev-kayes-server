@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import { SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from '../../config/siteEnv.js';
+import { IpBlock } from '../../models/auth/IpBlockModel.js';
 
 type ISendMailWithSmtpReturn = {
     status: boolean;
@@ -15,10 +16,12 @@ type ISendMailWithSmtpData = {
     verificationToken: number;
 };
 
+// <-------- 6 Digit Code Generate ------------>
 export const getSixDigitCode = () => {
     return Math.floor(100000 + Math.random() * 900000);
 };
 
+// <-------- Send Token to SMTP Email ------------>
 export const sendEmailWithSmtp = async (
     data: ISendMailWithSmtpData,
 ): Promise<ISendMailWithSmtpReturn> => {
@@ -58,7 +61,16 @@ export const sendEmailWithSmtp = async (
     };
 };
 
+// <---------- Password Reges ------------>
 export const passwordReges = async (password: string) => {
     const passwordReg = /^.{4,20}$/;
     return passwordReg.test(password);
+};
+
+// <---------- Saved Failed Login IP ------------>
+export const trackFailedLogin = async (ip: string): Promise<boolean> => {
+    if (!ip) return false;
+    const saveFailedLogin = await IpBlock.create({ ip });
+    if (!saveFailedLogin) return false;
+    return true;
 };

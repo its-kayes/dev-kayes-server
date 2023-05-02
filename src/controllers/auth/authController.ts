@@ -7,7 +7,9 @@ import {
     getSixDigitCode,
     passwordReges,
     sendEmailWithSmtp,
+    trackFailedLogin,
 } from '../../services/auth/authService.js';
+import { IpBlock } from '../../models/auth/IpBlockModel.js';
 
 interface IRegisterType extends IUser {
     loginIP: string;
@@ -79,15 +81,26 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     if (!(await passwordReges(pass)))
         return next(new AppError('Password must be 4 character long!', 401));
 
+    // <------ Is User Exit -------->
     const isUser = await User.findOne({ email: email }).select('password');
     if (!isUser) return next(new AppError('No user find', 404));
 
-    const isVerify = await bcrypt.compare(pass, isUser.password);
-    if (!isVerify) return next(new AppError('Password not match', 401));
+    // <------ Is User Verify -------->
+    const isPassOk = await bcrypt.compare(pass, isUser.password);
+
+    // <------ Track Failed Login Attempt -------->
+    if (!isPassOk) {
+        const saveAttempt = await trackFailedLogin(req.ip);
+        if (!saveAttempt) return next(new AppError('Failed to save login attempt', 400));
+        return next(new AppError('Password not match', 401));
+    }
+
+    const clearLoginAttempts = await IpBlock.deleteMany({ ip: req.ip });
+    if (!clearLoginAttempts) return next(new AppError('Failed to clear login attempt', 400));
 
     return res.status(200).json({
         message: 'Login Successfully',
-        isVerify,
+        isPassOk,
         id: req.ip,
     });
 });

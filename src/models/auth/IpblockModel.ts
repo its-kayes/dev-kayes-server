@@ -1,19 +1,14 @@
 import { Schema, model } from 'mongoose';
 
 export interface IIpBlock {
-    id: string;
-    email: string;
+    ip: string;
     hitTime: Date;
 }
 
 const ipBlockModel = new Schema<IIpBlock>({
-    id: {
+    ip: {
         type: String,
-        required: [true, 'Id is required for blockIp'],
-    },
-    email: {
-        type: String,
-        required: [true, 'Email is required for blockIp'],
+        required: [true, 'IP is required for blockIp'],
     },
     hitTime: {
         type: Date,
