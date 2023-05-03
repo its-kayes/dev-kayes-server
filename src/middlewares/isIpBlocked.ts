@@ -2,7 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import { IpBlock } from '../models/auth/IpBlockModel.js';
 import AppError from '../utils/appError.js';
 
-export const isIpBlock = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const isIpBlock = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<string | never | void> => {
     const ip: string = req.ip;
     const isIpBlocked = await IpBlock.aggregate([
         {

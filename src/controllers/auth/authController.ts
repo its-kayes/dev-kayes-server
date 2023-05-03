@@ -23,7 +23,7 @@ export const registerController = catchAsync(
             return next(new AppError('Missing required fields', 400));
 
         if (password !== confirmPassword)
-            return next(new AppError('Password and confirm password must match', 400));
+            return next(new AppError("Password and Confirm Password doesn't match", 400));
 
         if (!(await passwordReges(password)))
             return next(new AppError('Password must be 4 character long!', 401));
@@ -75,15 +75,15 @@ interface ILoginType {
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, pass }: ILoginType = req.query as unknown as ILoginType;
 
-    if (!email) return next(new AppError('Please provide email address', 401));
-    if (!pass) return next(new AppError('Please provide password ', 401));
+    if (!email) return next(new AppError('Email Required', 401));
+    if (!pass) return next(new AppError('Password Required', 401));
 
     if (!(await passwordReges(pass)))
         return next(new AppError('Password must be 4 character long!', 401));
 
     // <------ Is User Exit -------->
     const isUser = await User.findOne({ email: email }).select('password');
-    if (!isUser) return next(new AppError('No user find', 404));
+    if (!isUser) return next(new AppError('Invalid User', 404));
 
     // <------ Is User Verify -------->
     const isPassOk = await bcrypt.compare(pass, isUser.password);
@@ -92,7 +92,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     if (!isPassOk) {
         const saveAttempt = await trackFailedLogin(req.ip);
         if (!saveAttempt) return next(new AppError('Failed to save login attempt', 400));
-        return next(new AppError('Password not match', 401));
+        return next(new AppError('Wrong Password', 401));
     }
 
     const clearLoginAttempts = await IpBlock.deleteMany({ ip: req.ip });
@@ -104,3 +104,57 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
         id: req.ip,
     });
 });
+
+interface ICPassType {
+    email: string;
+    oldPass: string;
+    newPass: string;
+    confirmPass: string;
+}
+
+export const changePassword = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { email, oldPass, newPass, confirmPass }: ICPassType = req.body;
+
+        if (!email || !oldPass || !newPass || !confirmPass)
+            return next(new AppError('Missing required fields', 400));
+
+        if (newPass !== confirmPass)
+            return next(new AppError("Password and Confirm Password doesn't match", 400));
+
+        if (!(await passwordReges(newPass)))
+            return next(new AppError("Password requirement does't match", 400));
+
+        const isUser = await User.findOne({ email }).lean().select('password');
+        if (!isUser) return next(new AppError('Invalid User', 404));
+
+        const isPrePassOk: boolean = await bcrypt.compare(oldPass, isUser.password);
+        if (!isPrePassOk) return next(new AppError('Wrong Old Password', 401));
+
+        const hashPassword: string = await bcrypt.hash(newPass, 10);
+        const updatePass = await User.findOneAndUpdate(
+            { email },
+            { password: hashPassword },
+            { new: true, useFindAndModify: false, runValidators: true },
+        )
+            .lean()
+            .select('email');
+
+        if (!updatePass) return next(new AppError('Failed to update password', 400));
+
+        res.status(200).json({
+            message: 'Password Changed !',
+        });
+    },
+);
+
+// export const forgetPassword = catchAsync(
+//     async (req: Request, res: Response, next: NextFunction) => {
+
+//         const
+
+//         return res.status(200).json({
+//             message: 'Successfully Changed Password',
+//         });
+//     },
+// );
