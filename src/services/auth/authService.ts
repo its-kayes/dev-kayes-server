@@ -68,9 +68,9 @@ export const passwordReges = async (password: string) => {
 };
 
 // <---------- Saved Failed Login IP ------------>
-export const trackFailedLogin = async (ip: string): Promise<boolean> => {
+export const trackFailedAttempt = async (ip: string): Promise<boolean> => {
     if (!ip) return false;
-    const saveFailedLogin = await IpBlock.create({ ip });
-    if (!saveFailedLogin) return false;
+    const saveFailedAttempt = await IpBlock.create({ ip });
+    if (!saveFailedAttempt) return false;
     return true;
 };

@@ -7,7 +7,7 @@ import {
     getSixDigitCode,
     passwordReges,
     sendEmailWithSmtp,
-    trackFailedLogin,
+    trackFailedAttempt,
 } from '../../services/auth/authService.js';
 import { IpBlock } from '../../models/auth/IpBlockModel.js';
 
@@ -90,11 +90,12 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
 
     // <------ Track Failed Login Attempt -------->
     if (!isPassOk) {
-        const saveAttempt = await trackFailedLogin(req.ip);
+        const saveAttempt: boolean = await trackFailedAttempt(req.ip);
         if (!saveAttempt) return next(new AppError('Failed to save login attempt', 400));
         return next(new AppError('Wrong Password', 401));
     }
 
+    // <-------- Clear Failed Attempt -------->
     const clearLoginAttempts = await IpBlock.deleteMany({ ip: req.ip });
     if (!clearLoginAttempts) return next(new AppError('Failed to clear login attempt', 400));
 
@@ -125,12 +126,23 @@ export const changePassword = catchAsync(
         if (!(await passwordReges(newPass)))
             return next(new AppError("Password requirement does't match", 400));
 
+        // <------ Is User Exit -------->
         const isUser = await User.findOne({ email }).lean().select('password');
-        if (!isUser) return next(new AppError('Invalid User', 404));
+        if (!isUser) {
+            const saveAttempt: boolean = await trackFailedAttempt(req.ip);
+            if (!saveAttempt) return next(new AppError('Failed to save attempt', 400));
+            return next(new AppError('Invalid User', 404));
+        }
 
+        // <------ Is User Verify -------->
         const isPrePassOk: boolean = await bcrypt.compare(oldPass, isUser.password);
-        if (!isPrePassOk) return next(new AppError('Wrong Old Password', 401));
+        if (!isPrePassOk) {
+            const saveAttempt: boolean = await trackFailedAttempt(req.ip);
+            if (!saveAttempt) return next(new AppError('Failed to save attempt', 400));
+            return next(new AppError('Wrong Old Password', 401));
+        }
 
+        // <------ Update Password -------->
         const hashPassword: string = await bcrypt.hash(newPass, 10);
         const updatePass = await User.findOneAndUpdate(
             { email },
@@ -141,6 +153,10 @@ export const changePassword = catchAsync(
             .select('email');
 
         if (!updatePass) return next(new AppError('Failed to update password', 400));
+
+        // <-------- Clear Failed Attempt -------->
+        const clearLoginAttempts = await IpBlock.deleteMany({ ip: req.ip });
+        if (!clearLoginAttempts) return next(new AppError('Failed to clear login attempt', 400));
 
         res.status(200).json({
             message: 'Password Changed !',

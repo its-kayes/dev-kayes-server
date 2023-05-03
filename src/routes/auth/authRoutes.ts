@@ -8,7 +8,7 @@ import { isIpBlock } from '../../middlewares/isIpBlocked.js';
 
 const router = Router();
 
-router.post('/register', registerController);
+router.post('/register', isIpBlock, registerController);
 router.get('/login', isIpBlock, login);
 router.post('/change-password', isIpBlock, changePassword);
 
