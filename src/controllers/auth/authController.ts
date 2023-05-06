@@ -10,6 +10,9 @@ import {
     trackFailedAttempt,
 } from '../../services/auth/authService.js';
 import { IpBlock } from '../../models/auth/IpBlockModel.js';
+import crypto from 'node:crypto';
+import jwt from 'jsonwebtoken';
+import { FRONTEND_BASE_URL, JWT_SECRET } from '../../config/siteEnv.js';
 
 interface IRegisterType extends IUser {
     loginIP: string;
@@ -164,13 +167,36 @@ export const changePassword = catchAsync(
     },
 );
 
-// export const forgetPassword = catchAsync(
-//     async (req: Request, res: Response, next: NextFunction) => {
+interface IForgetPassType {
+    email: string;
+}
+export const forgetPassword = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const { email }: IForgetPassType = req.query as unknown as IForgetPassType;
 
-//         const
+        if (!email) return next(new AppError('Email required !', 404));
 
-//         return res.status(200).json({
-//             message: 'Successfully Changed Password',
-//         });
-//     },
-// );
+        const isUser = await User.findOne({ email }).lean().select('passwordResetToken');
+        if (!isUser) return next(new AppError('No user exist !', 404));
+
+        const generateToken: string = crypto.randomBytes(64).toString('hex');
+
+        const saveToken = await User.findOneAndUpdate(
+            { email },
+            { passwordResetToken: generateToken },
+            { new: true },
+        );
+        if (!saveToken) return next(new AppError('Error to save reset token', 400));
+
+        const tokenToJWT: string = jwt.sign({ token: generateToken, email }, JWT_SECRET, {
+            expiresIn: 3 * 60,
+        });
+
+        const resetLink = `Please visit this link for reset your password! Link will be valid for next 3 minutes <a href="${FRONTEND_BASE_URL}/auth/forget-password/${tokenToJWT}"> link </a>`;
+
+        return res.status(200).json({
+            message: 'Successfully request for forget Password',
+            resetLink,
+        });
+    },
+);

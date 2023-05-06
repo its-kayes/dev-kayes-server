@@ -14,6 +14,7 @@ export interface IUser {
         loginDate: Date;
         loginIP: string;
     }[];
+    passwordResetToken: string;
 }
 
 const registerSchema = new Schema<IUser>(
@@ -69,6 +70,9 @@ const registerSchema = new Schema<IUser>(
                 },
             },
         ],
+        passwordResetToken: {
+            type: String,
+        },
     },
     { timestamps: true },
 );

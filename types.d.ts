@@ -7,4 +7,5 @@ export interface SiteEnvTypes {
     SMTP_USER: string;
     SMTP_PORT: number;
     SMTP_HOST: string;
+    FRONTEND_BASE_URL: string;
 }
