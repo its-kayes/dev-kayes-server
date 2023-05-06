@@ -13,6 +13,7 @@ import { IpBlock } from '../../models/auth/IpBlockModel.js';
 import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import { FRONTEND_BASE_URL, JWT_SECRET } from '../../config/siteEnv.js';
+import { Document } from 'mongoose';
 
 interface IRegisterType extends IUser {
     loginIP: string;
@@ -189,7 +190,7 @@ export const forgetPassword = catchAsync(
         if (!saveToken) return next(new AppError('Error to save reset token', 400));
 
         const tokenToJWT: string = jwt.sign({ token: generateToken, email }, JWT_SECRET, {
-            expiresIn: 3 * 60,
+            expiresIn: 60 * 60,
         });
 
         const resetLink = `Please visit this link for reset your password! Link will be valid for next 3 minutes <a href="${FRONTEND_BASE_URL}/auth/forget-password/${tokenToJWT}"> link </a>`;
@@ -200,3 +201,55 @@ export const forgetPassword = catchAsync(
         });
     },
 );
+interface IResetPassword {
+    token: string;
+    confirmPass: string;
+    newPass: string;
+}
+
+interface IDecodedToken {
+    token: string;
+    email: string;
+    exp: number;
+    iat: number;
+}
+
+interface UserDocument extends Document {
+    email: string;
+    passwordResetToken: string;
+}
+
+export const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { token, newPass, confirmPass }: IResetPassword = req.body;
+    if (!token || !newPass || !confirmPass)
+        return next(new AppError('Required property missing', 404));
+
+    if (newPass !== confirmPass) return next(new AppError("Confirm Password doesn't match", 400));
+
+    const decodeToken: IDecodedToken = jwt.verify(token, JWT_SECRET) as IDecodedToken;
+    if (!decodeToken) return next(new AppError('UnAuthorized Token', 402));
+
+    const isUser = await User.findOne<UserDocument>({ email: decodeToken.email })
+        .lean()
+        .select(['passwordResetToken', 'email']);
+
+    if (!isUser) return next(new AppError("User does't exits", 404));
+
+    if (isUser.passwordResetToken !== decodeToken.token)
+        return next(new AppError("Token doesn't match, UnAuthorized User", 402));
+
+    const hashPassword: Promise<string> = await bcrypt.hash(newPass, 10);
+
+    const updatePassword = await User.findOneAndUpdate(
+        { email: isUser.email },
+        { password: hashPassword },
+        { new: true },
+    );
+
+    if (!updatePassword) return next(new AppError('Error while updating password', 400));
+
+    res.status(200).json({
+        message: 'Reset Password',
+        decodeToken,
+    });
+});
