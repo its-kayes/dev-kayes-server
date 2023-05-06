@@ -238,7 +238,7 @@ export const resetPassword = catchAsync(async (req: Request, res: Response, next
     if (isUser.passwordResetToken !== decodeToken.token)
         return next(new AppError("Token doesn't match, UnAuthorized User", 402));
 
-    const hashPassword: Promise<string> = await bcrypt.hash(newPass, 10);
+    const hashPassword: string = await bcrypt.hash(newPass, 10);
 
     const updatePassword = await User.findOneAndUpdate(
         { email: isUser.email },
