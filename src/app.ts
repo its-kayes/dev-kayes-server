@@ -3,10 +3,10 @@ import logger from 'morgan';
 import helmet from 'helmet';
 import express, { Application } from 'express';
 import { Request, Response, NextFunction } from 'express';
-import AppError from './utils/appError.js';
-import globalErrorHandler from './controllers/errorController.js';
-import AppRoutes from './base-routes/v1/AppRoutes.js';
-import { getIpAddress } from './services/auth/authService.js';
+import AppError from './utils/appError';
+import globalErrorHandler from './controllers/errorController';
+import AppRoutes from './base-routes/v1/AppRoutes';
+import { getIpAddress } from './services/auth/authService';
 
 const app: Application = express();
 

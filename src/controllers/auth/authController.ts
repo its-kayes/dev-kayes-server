@@ -1,19 +1,19 @@
 import bcrypt from 'bcryptjs';
 import { NextFunction, Request, Response } from 'express';
-import catchAsync from '../../utils/catchAsync.js';
-import { User } from '../../models/auth/authModel.js';
-import AppError from '../../utils/appError.js';
+import catchAsync from '../../utils/catchAsync';
+import { User } from '../../models/auth/authModel';
+import AppError from '../../utils/appError';
 import {
     getIpAddress,
     getSixDigitCode,
     passwordReges,
     sendEmailWithSmtp,
     trackFailedAttempt,
-} from '../../services/auth/authService.js';
-import { IpBlock } from '../../models/auth/IpBlockModel.js';
+} from '../../services/auth/authService';
+import { IpBlock } from '../../models/auth/IpblockModel';
 import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
-import { FRONTEND_BASE_URL, JWT_SECRET } from '../../config/siteEnv.js';
+import { FRONTEND_BASE_URL, JWT_SECRET } from '../../config/siteEnv';
 import {
     ICPassType,
     IDecodedToken,
@@ -22,7 +22,7 @@ import {
     IRegisterType,
     IResetPassword,
     UserDocument,
-} from '../../interface/auth.interface.js';
+} from '../../interface/auth.interface';
 
 // <--------------------------- User Register ------------------------>
 export const registerController = catchAsync(

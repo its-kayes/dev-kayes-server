@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { createHealthCheck, getHealthCheck } from '../controllers/healthCheckController.js';
-import { validate } from '../middlewares/validateResult.js';
+import { createHealthCheck, getHealthCheck } from '../controllers/healthCheckController';
+import { validate } from '../middlewares/validateResult';
 
 const router = Router();
 

@@ -1,7 +1,7 @@
 import mongoose, { ConnectOptions } from 'mongoose';
-import app from './app.js';
+import app from './app';
 
-import { MONGO_URI, PORT } from './config/siteEnv.js';
+import { MONGO_URI, PORT } from './config/siteEnv';
 
 mongoose
     .connect(MONGO_URI, {

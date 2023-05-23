@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import { IpBlock } from '../models/auth/IpBlockModel.js';
-import AppError from '../utils/appError.js';
-import { getIpAddress } from '../services/auth/authService.js';
+import { IpBlock } from '../models/auth/IpblockModel';
+import AppError from '../utils/appError';
+import { getIpAddress } from '../services/auth/authService';
 
 export const isIpBlock = async (
     req: Request,

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { healthCheckRoutes } from '../../routes/healthCheckRoutes.js';
-import { authRoutes } from '../../routes/auth/authRoutes.js';
-import { isIpBlock } from '../../middlewares/isIpBlocked.js';
+import { healthCheckRoutes } from '../../routes/healthCheckRoutes';
+import { authRoutes } from '../../routes/auth/authRoutes';
+import { isIpBlock } from '../../middlewares/isIpBlocked';
 
 const router: Router = Router();
 

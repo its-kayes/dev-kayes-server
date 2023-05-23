@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
-import { SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from '../../config/siteEnv.js';
-import { IpBlock } from '../../models/auth/IpBlockModel.js';
+import { SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from '../../config/siteEnv';
 import { Request } from 'express';
+import { IpBlock } from '../../models/auth/IpblockModel';
 
 type ISendMailWithSmtpReturn = {
     status: boolean;

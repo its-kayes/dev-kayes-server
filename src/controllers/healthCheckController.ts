@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
-import catchAsync from '../utils/catchAsync.js';
-import { HealthCheck, IHealthCheck } from '../models/healthCheckModel.js';
-import AppError from '../utils/appError.js';
+import catchAsync from '../utils/catchAsync';
+import { HealthCheck, IHealthCheck } from '../models/healthCheckModel';
+import AppError from '../utils/appError';
 
 export const createHealthCheck = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {

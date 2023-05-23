@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import AppError from '../utils/appError.js';
+import AppError from '../utils/appError';
 
 // castError handler
 const castErrorHandler = (err: any) => {
