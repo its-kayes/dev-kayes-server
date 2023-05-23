@@ -4,6 +4,7 @@ import catchAsync from '../../utils/catchAsync.js';
 import { IUser, User } from '../../models/auth/authModel.js';
 import AppError from '../../utils/appError.js';
 import {
+    getIpAddress,
     getSixDigitCode,
     passwordReges,
     sendEmailWithSmtp,
@@ -42,7 +43,7 @@ export const registerController = catchAsync(
             name,
             email,
             password: hashPassword,
-            loginHistory: [{ loginIP: req.ip }],
+            loginHistory: [{ loginIP: await getIpAddress(req) }],
             verificationToken,
         });
 
@@ -94,19 +95,19 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
 
     // <------ Track Failed Login Attempt -------->
     if (!isPassOk) {
-        const saveAttempt: boolean = await trackFailedAttempt(req.ip);
+        const saveAttempt: boolean = await trackFailedAttempt(await getIpAddress(req));
         if (!saveAttempt) return next(new AppError('Failed to save login attempt', 400));
         return next(new AppError('Wrong Password', 401));
     }
 
     // <-------- Clear Failed Attempt -------->
-    const clearLoginAttempts = await IpBlock.deleteMany({ ip: req.ip });
+    const clearLoginAttempts = await IpBlock.deleteMany({ ip: await getIpAddress(req) });
     if (!clearLoginAttempts) return next(new AppError('Failed to clear login attempt', 400));
 
     return res.status(200).json({
         message: 'Login Successfully',
         isPassOk,
-        id: req.ip,
+        id: await getIpAddress(req),
     });
 });
 
@@ -133,7 +134,7 @@ export const changePassword = catchAsync(
         // <------ Is User Exit -------->
         const isUser = await User.findOne({ email }).lean().select('password');
         if (!isUser) {
-            const saveAttempt: boolean = await trackFailedAttempt(req.ip);
+            const saveAttempt: boolean = await trackFailedAttempt(await getIpAddress(req));
             if (!saveAttempt) return next(new AppError('Failed to save attempt', 400));
             return next(new AppError('Invalid User', 404));
         }
@@ -141,7 +142,7 @@ export const changePassword = catchAsync(
         // <------ Is User Verify -------->
         const isPrePassOk: boolean = await bcrypt.compare(oldPass, isUser.password);
         if (!isPrePassOk) {
-            const saveAttempt: boolean = await trackFailedAttempt(req.ip);
+            const saveAttempt: boolean = await trackFailedAttempt(await getIpAddress(req));
             if (!saveAttempt) return next(new AppError('Failed to save attempt', 400));
             return next(new AppError('Wrong Old Password', 401));
         }
@@ -159,7 +160,7 @@ export const changePassword = catchAsync(
         if (!updatePass) return next(new AppError('Failed to update password', 400));
 
         // <-------- Clear Failed Attempt -------->
-        const clearLoginAttempts = await IpBlock.deleteMany({ ip: req.ip });
+        const clearLoginAttempts = await IpBlock.deleteMany({ ip: await getIpAddress(req) });
         if (!clearLoginAttempts) return next(new AppError('Failed to clear login attempt', 400));
 
         res.status(200).json({

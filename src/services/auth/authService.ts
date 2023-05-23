@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import { SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from '../../config/siteEnv.js';
 import { IpBlock } from '../../models/auth/IpBlockModel.js';
+import { Request } from 'express';
 
 type ISendMailWithSmtpReturn = {
     status: boolean;
@@ -73,4 +74,16 @@ export const trackFailedAttempt = async (ip: string): Promise<boolean> => {
     const saveFailedAttempt = await IpBlock.create({ ip });
     if (!saveFailedAttempt) return false;
     return true;
+};
+
+// <----------------  Get Ip Address ------------>
+export const getIpAddress = async (req: Request): Promise<string> => {
+    const ipAddresses = req.headers['x-forwarded-for'] as string | undefined;
+    if (ipAddresses && ipAddresses.length > 3) {
+        const ip = ipAddresses.split(',')[0];
+        return ip;
+    } else {
+        const ip = req.connection.remoteAddress || '';
+        return ip;
+    }
 };
