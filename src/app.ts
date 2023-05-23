@@ -18,7 +18,7 @@ const options: express.RequestHandler[] = [
         credentials: true,
     }),
     helmet(),
-    logger('dev'),
+    logger('combined'),
     express.json({ limit: '50mb' }),
     express.urlencoded({ extended: true }),
 ];
