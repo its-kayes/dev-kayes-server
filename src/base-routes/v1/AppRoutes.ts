@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { healthCheckRoutes } from '../../routes/healthCheckRoutes.js';
 import { authRoutes } from '../../routes/auth/authRoutes.js';
+import { isIpBlock } from '../../middlewares/isIpBlocked.js';
 
-const router = Router();
+const router: Router = Router();
 
 router.use('/health-check', healthCheckRoutes);
-router.use('/auth', authRoutes);
+router.use('/auth', isIpBlock, authRoutes);
 
-// export const v1Routes = router;
 export default router;

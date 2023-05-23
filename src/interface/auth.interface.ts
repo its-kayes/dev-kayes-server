@@ -1,6 +1,21 @@
 import { Document } from 'mongoose';
-import { IUser } from '../models/auth/authModel.js';
 
+export interface IUser {
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    signInDate: Date;
+    failedLoginAttempts: string[];
+    lockUntil: Date;
+    isVerified: boolean;
+    verificationToken: number;
+    loginHistory: {
+        loginDate: Date;
+        loginIP: string;
+    }[];
+    passwordResetToken: string;
+}
 export interface IRegisterType extends IUser {
     loginIP: string;
     confirmPassword: string;

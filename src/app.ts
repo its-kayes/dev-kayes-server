@@ -1,13 +1,13 @@
 import cors from 'cors';
 import logger from 'morgan';
 import helmet from 'helmet';
-import express from 'express';
+import express, { Application } from 'express';
 import { Request, Response, NextFunction } from 'express';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
 import AppRoutes from './base-routes/v1/AppRoutes.js';
 
-const app = express();
+const app: Application = express();
 
 const options: express.RequestHandler[] = [
     cors({
@@ -19,6 +19,7 @@ const options: express.RequestHandler[] = [
     helmet(),
     logger('dev'),
     express.json({ limit: '50mb' }),
+    express.urlencoded({ extended: true }),
 ];
 
 app.use(options);

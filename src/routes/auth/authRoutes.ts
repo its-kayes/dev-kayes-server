@@ -6,13 +6,12 @@ import {
     registerController,
     resetPassword,
 } from '../../controllers/auth/authController.js';
-import { isIpBlock } from '../../middlewares/isIpBlocked.js';
 
-const router = Router();
+const router: Router = Router();
 
-router.post('/register', isIpBlock, registerController);
-router.get('/login', isIpBlock, login);
-router.post('/change-password', isIpBlock, changePassword);
+router.post('/register', registerController);
+router.get('/login', login);
+router.post('/change-password', changePassword);
 router.get('/forget-password', forgetPassword);
 router.post('/reset-password', resetPassword);
 

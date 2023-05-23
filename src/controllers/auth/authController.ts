@@ -24,6 +24,7 @@ import {
     UserDocument,
 } from '../../interface/auth.interface.js';
 
+// <--------------------------- User Register ------------------------>
 export const registerController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const { name, email, password, confirmPassword, loginIP }: IRegisterType = req.body;
@@ -75,6 +76,7 @@ export const registerController = catchAsync(
     },
 );
 
+// <---------------------- User Login ------------------------>
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, pass }: ILoginType = req.query as unknown as ILoginType;
 
@@ -109,6 +111,7 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
     });
 });
 
+// <--------------------- Change Password -------------------->
 export const changePassword = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const { email, oldPass, newPass, confirmPass }: ICPassType = req.body;
@@ -160,6 +163,7 @@ export const changePassword = catchAsync(
     },
 );
 
+// <-------------------- Forget Password ---------------------->
 export const forgetPassword = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const { email }: IForgetPassType = req.query as unknown as IForgetPassType;
@@ -191,6 +195,7 @@ export const forgetPassword = catchAsync(
     },
 );
 
+// <---------------------- Reset Password ------------------------------->
 export const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { token, newPass, confirmPass }: IResetPassword = req.body;
     if (!token || !newPass || !confirmPass)
