@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../../utils/catchAsync.js';
-import { IUser, User } from '../../models/auth/authModel.js';
+import { User } from '../../models/auth/authModel.js';
 import AppError from '../../utils/appError.js';
 import {
     getIpAddress,
@@ -14,12 +14,15 @@ import { IpBlock } from '../../models/auth/IpBlockModel.js';
 import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import { FRONTEND_BASE_URL, JWT_SECRET } from '../../config/siteEnv.js';
-import { Document } from 'mongoose';
-
-interface IRegisterType extends IUser {
-    loginIP: string;
-    confirmPassword: string;
-}
+import {
+    ICPassType,
+    IDecodedToken,
+    IForgetPassType,
+    ILoginType,
+    IRegisterType,
+    IResetPassword,
+    UserDocument,
+} from '../../interface/auth.interface.js';
 
 export const registerController = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -72,11 +75,6 @@ export const registerController = catchAsync(
     },
 );
 
-interface ILoginType {
-    email: string;
-    pass: string;
-}
-
 export const login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { email, pass }: ILoginType = req.query as unknown as ILoginType;
 
@@ -110,13 +108,6 @@ export const login = catchAsync(async (req: Request, res: Response, next: NextFu
         id: await getIpAddress(req),
     });
 });
-
-interface ICPassType {
-    email: string;
-    oldPass: string;
-    newPass: string;
-    confirmPass: string;
-}
 
 export const changePassword = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -169,9 +160,6 @@ export const changePassword = catchAsync(
     },
 );
 
-interface IForgetPassType {
-    email: string;
-}
 export const forgetPassword = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
         const { email }: IForgetPassType = req.query as unknown as IForgetPassType;
@@ -202,23 +190,6 @@ export const forgetPassword = catchAsync(
         });
     },
 );
-interface IResetPassword {
-    token: string;
-    confirmPass: string;
-    newPass: string;
-}
-
-interface IDecodedToken {
-    token: string;
-    email: string;
-    exp: number;
-    iat: number;
-}
-
-interface UserDocument extends Document {
-    email: string;
-    passwordResetToken: string;
-}
 
 export const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { token, newPass, confirmPass }: IResetPassword = req.body;
