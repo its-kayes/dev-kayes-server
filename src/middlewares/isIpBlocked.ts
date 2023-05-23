@@ -1,13 +1,14 @@
 import { NextFunction, Request, Response } from 'express';
 import { IpBlock } from '../models/auth/IpBlockModel.js';
 import AppError from '../utils/appError.js';
+import { getIpAddress } from '../services/auth/authService.js';
 
 export const isIpBlock = async (
     req: Request,
     res: Response,
     next: NextFunction,
 ): Promise<string | never | void> => {
-    const ip: string = req.ip;
+    const ip: string = await getIpAddress(req);
     const isIpBlocked = await IpBlock.aggregate([
         {
             $match: {

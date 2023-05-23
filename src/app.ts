@@ -6,6 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 import AppError from './utils/appError.js';
 import globalErrorHandler from './controllers/errorController.js';
 import AppRoutes from './base-routes/v1/AppRoutes.js';
+import { getIpAddress } from './services/auth/authService.js';
 
 const app: Application = express();
 
@@ -24,10 +25,11 @@ const options: express.RequestHandler[] = [
 
 app.use(options);
 
-app.use('/dev-check', (req: Request, res: Response) => {
+app.use('/dev-check', async (req: Request, res: Response) => {
+    const ip: string = await getIpAddress(req);
     res.status(200).json({
         status: 'ok',
-        message: `Server is running:), Req from :- ${req.ip}`,
+        message: `Server is running:), Req from :- ${ip}`,
     });
 });
 
